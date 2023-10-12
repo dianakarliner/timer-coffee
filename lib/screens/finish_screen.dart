@@ -8,6 +8,8 @@ import 'package:auto_route/auto_route.dart';
 import '../app_router.gr.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter/foundation.dart';
 
 class FinishScreen extends StatefulWidget {
   final String brewingMethodName;
@@ -54,6 +56,14 @@ class _FinishScreenState extends State<FinishScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Check if wakelock is enabled and disable it
+    WakelockPlus.enabled.then((bool wakelockEnabled) {
+      if (wakelockEnabled) {
+        WakelockPlus.disable();
+      }
+    });
+
     coffeeFact = getRandomCoffeeFact();
   }
 
@@ -119,7 +129,7 @@ class _FinishScreenState extends State<FinishScreen> {
               child: const Text('Home'),
             ),
             const SizedBox(height: 20),
-            if (!Platform.isIOS) // Conditional statement
+            if (kIsWeb || !Platform.isIOS) // Conditional statement
               ElevatedButton.icon(
                 onPressed: () =>
                     _launchURL('https://www.buymeacoffee.com/timercoffee'),
